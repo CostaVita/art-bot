@@ -1,24 +1,29 @@
-# Используем OpenJDK 17 как базовый образ
+# Этап сборки - используем официальный образ Maven с Java 17
+FROM maven:3.8-openjdk-17 AS build
+
+# Устанавливаем рабочую директорию
+WORKDIR /app
+
+# Копируем pom.xml для кэширования зависимостей
+COPY pom.xml .
+
+# Скачиваем зависимости (этот слой будет кэшироваться)
+RUN mvn dependency:go-offline -B
+
+# Копируем исходный код
+COPY src ./src
+
+# Собираем приложение
+RUN mvn clean package -DskipTests
+
+# Этап выполнения - используем минимальный образ Java
 FROM openjdk:17-jdk-slim
 
 # Устанавливаем рабочую директорию
 WORKDIR /app
 
-# Копируем Maven файлы для кэширования зависимостей
-COPY pom.xml .
-COPY src ./src
-
-# Устанавливаем Maven
-RUN apt-get update && apt-get install -y maven
-
-# Собираем приложение
-RUN mvn clean package -DskipTests
-
-# Удаляем Maven после сборки для уменьшения размера образа
-RUN apt-get remove -y maven && apt-get autoremove -y && apt-get clean
-
-# Копируем собранный JAR файл
-COPY target/art-bot-1.0-SNAPSHOT.jar app.jar
+# Копируем собранный JAR из этапа сборки
+COPY --from=build /app/target/art-bot-1.0-SNAPSHOT.jar app.jar
 
 # Устанавливаем переменные окружения для кодировки
 ENV JAVA_OPTS="-Dfile.encoding=UTF-8 -Dsun.jnu.encoding=UTF-8"
