@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  telegram-bot:
+    build: .
+    container_name: art-bot
+    restart: unless-stopped
+    environment:
+      # Telegram Bot Configuration
+      - TELEGRAM_BOT_TOKEN=7698468184:AAG8Xq2WUNVYtrZkTUcNRJMvg89q_uYwPBc
+      - TELEGRAM_BOT_USERNAME=art_picture_bot
+      
+      # Admin Configuration
+      - BOT_ADMIN_IDS=629008286,963829801,153359354
+      
+      # Logging
+      - LOGGING_LEVEL_ORG_EXAMPLE=INFO
+      - LOGGING_LEVEL_ORG_TELEGRAM=INFO
+      
+      # Server Configuration
+      - SERVER_PORT=8080
+      - SPRING_APPLICATION_NAME=art-bot
+      
+      # Encoding Configuration
+      - SPRING_HTTP_ENCODING_CHARSET=UTF-8
+      - SPRING_HTTP_ENCODING_ENABLED=true
+      - SPRING_HTTP_ENCODING_FORCE=true
+      - JAVA_OPTS=-Dfile.encoding=UTF-8 -Dsun.jnu.encoding=UTF-8
+      
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - bot-network
+
+networks:
+  bot-network:
+    driver: bridge 

@@ -1,0 +1,37 @@
+# Git
+.git
+.gitignore
+
+# IDE
+.idea
+.vscode
+*.iml
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Maven
+target/
+!target/art-bot-1.0-SNAPSHOT.jar
+
+# Scripts
+*.bat
+*.sh
+
+# Documentation
+README.md
+*.md
+
+# Docker
+Dockerfile
+.dockerignore
+
+# Environment files
+.env
+application-*.properties
+!application.properties 
